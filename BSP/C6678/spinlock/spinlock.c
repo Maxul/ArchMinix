@@ -1,0 +1,25 @@
+/*
+ * spinlock.c
+ *
+ */
+#include <rtems.h>
+#include <ti/csl/csl_semAux.h>
+#include <stdint.h>
+
+void spinlock_lock(uint8_t num)
+{
+	ISR_Level level;
+
+	_ISR_Disable(level);
+    while (CSL_semAcquireDirect(num) == 0);
+   _ISR_Enable(level);
+}
+
+void spinlock_unlock(uint8_t num)
+{
+	ISR_Level level;
+
+	_ISR_Disable(level);
+    CSL_semReleaseSemaphore(num);
+    _ISR_Enable(level);
+}

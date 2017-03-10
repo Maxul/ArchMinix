@@ -1,0 +1,156 @@
+// typeinfo standard header for gcc/EDG
+#ifndef _TYPEINFO_
+#define _TYPEINFO_
+#include <exception>
+
+ #if defined(__BORLANDC__) && !__EDG__
+  #include <typeinfo.h>
+
+ #else /* defined(__BORLANDC__) && !__EDG__ */
+_STD_BEGIN
+		// CLASS bad_cast
+class bad_cast
+	: public _XSTD exception
+	{	// base of all bad-cast exceptions
+public:
+	bad_cast() _THROW0()
+#if defined(__TI_COMPILER_VERSION__)
+;
+#else
+		{	// construct with no message string
+		}
+#endif /* defined(__TI_COMPILER_VERSION__) */
+
+#if defined(__TI_COMPILER_VERSION__)
+	 bad_cast(const bad_cast&) _THROW0();
+	 bad_cast& operator=(const bad_cast&) _THROW0();
+	 virtual ~bad_cast() _THROW0();
+#endif /* defined(__TI_COMPILER_VERSION__) */
+
+	virtual const char *what() const _THROW0()
+#if defined(__TI_COMPILER_VERSION__)
+;
+#else
+		{	// report a bad cast
+		return ("bad cast");
+		}
+#endif /* defined(__TI_COMPILER_VERSION__) */
+
+ #if _HAS_EXCEPTIONS
+
+ #else /* _HAS_EXCEPTIONS */
+
+protected:
+	virtual void _Doraise() const
+		{	// perform class-specific exception handling
+		_RAISE(*this);
+		}
+ #endif /* _HAS_EXCEPTIONS */
+
+	};
+
+		// CLASS bad_typeid
+class bad_typeid
+	: public _XSTD exception
+	{	// base of all bad-typeid exceptions
+public:
+
+	bad_typeid() _THROW0()
+#if defined(__TI_COMPILER_VERSION__)
+;
+#else
+		{	// construct with no message string
+		}
+#endif /* defined(__TI_COMPILER_VERSION__) */
+
+#if defined(__TI_COMPILER_VERSION__)
+	 bad_typeid(const bad_typeid&) _THROW0();
+	 bad_typeid& operator=(const bad_typeid&) _THROW0();
+	 virtual ~bad_typeid() _THROW0();
+#endif /* defined(__TI_COMPILER_VERSION__) */
+	virtual const char *what() const _THROW0()
+#if defined(__TI_COMPILER_VERSION__)
+;
+#else
+		{	// report a bad typeid
+		return ("bad typeid");
+		}
+#endif /* defined(__TI_COMPILER_VERSION__) */
+ #if _HAS_EXCEPTIONS
+
+ #else /* _HAS_EXCEPTIONS */
+
+protected:
+	virtual void _Doraise() const
+		{	// perform class-specific exception handling
+		_RAISE(*this);
+		}
+ #endif /* _HAS_EXCEPTIONS */
+
+	};
+_STD_END
+
+
+
+namespace std {
+
+ #if __EDG__
+  #pragma define_type_info
+ #endif /* __EDG__ */
+
+		// CLASS type_info
+class type_info
+	{	// translator-supplied descriptor for a type
+public:
+	virtual ~type_info();	// destroy the object
+
+  #if __EDG__ || defined(__SUNPRO_CC)
+	bool before(const type_info&) const;	// test if this precedes arg
+
+	bool operator==(const type_info&) const;	// test for equality
+
+	bool operator!=(const type_info&) const;	// test for inequality
+
+	const char *name() const;	// return name of type
+
+  #else
+	bool before(const type_info&) const;	// test if this precedes arg
+
+	bool operator==(const type_info&) const;	// test for equality
+
+	bool operator!=(const type_info&) const;	// test for inequality
+
+	const char *name() const;	// return name of type
+
+protected:
+	explicit type_info(const char *);	// construct with name
+
+	const char *_Myname;
+
+  #endif /* __EDG__ etc. */
+
+protected:	// to shut up compiler
+	type_info(const type_info&);	// not defined
+
+private:
+	type_info& operator=(const type_info&);	// not defined
+#ifdef __EDG_IA64_ABI
+  private:
+    const char *__type_name;
+#endif /* ifdef __EDG_IA64_ABI */
+	};
+}	/* namespace std */
+
+ #if _HAS_NAMESPACE
+
+ #else /* _HAS_NAMESPACE */
+using std::type_info;
+ #endif /* _HAS_NAMESPACE */
+
+ #endif /* defined(__BORLANDC__) && !__EDG__ */
+#endif /* _TYPE_INFO_ */
+
+/*
+ * Copyright (c) 1992-2004 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+V4.02:1476 */

@@ -1,0 +1,65 @@
+/**
+ * @file
+ *
+ * @brief Set Objects Name
+ * @ingroup ScoreObject
+ */
+
+/*
+ *  COPYRIGHT (c) 1989-2014.
+ *  On-Line Applications Research Corporation (OAR).
+ *
+ *  The license and distribution terms for this file may be
+ *  found in the file LICENSE in this distribution or at
+ *  http://www.rtems.org/license/LICENSE.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <rtems/score/objectimpl.h>
+#include <rtems/score/wkspace.h>
+
+#include <string.h>
+
+bool _Objects_Set_name(
+  Objects_Information *information,
+  Objects_Control     *the_object,
+  const char          *name
+)
+{
+  size_t                 length;
+  const char            *s;
+
+  s      = name;
+  length = strnlen( name, information->name_length );
+
+#if defined(RTEMS_SCORE_OBJECT_ENABLE_STRING_NAMES)
+  if ( information->is_string ) {
+    char *d;
+
+    d = _Workspace_Allocate( length + 1 );
+    if ( !d )
+      return false;
+
+    _Workspace_Free( (void *)the_object->name.name_p );
+    the_object->name.name_p = NULL;
+
+    strncpy( d, name, length );
+    d[length] = '\0';
+    the_object->name.name_p = d;
+  } else
+#endif
+  {
+    the_object->name.name_u32 =  _Objects_Build_name(
+      ((length)     ? s[ 0 ] : ' '),
+      ((length > 1) ? s[ 1 ] : ' '),
+      ((length > 2) ? s[ 2 ] : ' '),
+      ((length > 3) ? s[ 3 ] : ' ')
+    );
+
+  }
+
+  return true;
+}

@@ -1,0 +1,42 @@
+// iostream standard header
+#ifndef _IOSTREAM_
+#define _IOSTREAM_
+#include <istream>
+_STD_BEGIN
+
+// OBJECTS
+static _DATA_ACCESS ios_base::Init _Ios_init;// force initialization of byte streams
+
+extern _DATA_ACCESS istream cin;
+extern _DATA_ACCESS ostream cout;
+extern _DATA_ACCESS ostream cerr;
+
+#if _HAS_NAMESPACE
+extern _DATA_ACCESS ostream clog;
+
+#else /* _HAS_NAMESPACE */
+
+extern _DATA_ACCESS ostream clog;
+
+#endif /* _HAS_NAMESPACE */
+
+// CLASS _Winit
+class _Winit {	// controller for wide standard-stream initialization
+public:
+	_Winit();
+	~_Winit();
+private:
+	static _DATA_ACCESS int _Init_cnt;
+};
+
+// WIDE OBJECTS
+static _DATA_ACCESS _Winit _Wios_init;	// force initialization of wide streams
+extern _DATA_ACCESS wistream wcin;
+extern _DATA_ACCESS wostream wcout, wcerr, wclog;
+_STD_END
+#endif /* _IOSTREAM_ */
+
+/*
+ * Copyright (c) 1992-2004 by P.J. Plauger.  ALL RIGHTS RESERVED.
+ * Consult your license regarding permissions and restrictions.
+ V4.02:1476 */
