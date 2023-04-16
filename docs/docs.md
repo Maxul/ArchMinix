@@ -1,6 +1,6 @@
 # Docs
 
-## RTEMS 4.11 移植说明
+## RTEMS 移植说明
 
 在充分理解RTEMS操作系统的设计以及比对同类嵌入式系统和通用系统后，笔者对源码树结构进行了调整，使其更加扁平化，有助于后续的模块化和管理维护。
 
@@ -11,65 +11,60 @@
 
 整体目录说明：
 
-docs
-文档说明。
+docs: 文档说明。
 
 libcpu (cpukit/score/cpu)
-c66x：和体系结构相关(C6000系列DSP)的上下文切换、中断向量表以及部分汇编指令编写的辅助函数。
+- c66x：和体系结构相关(C6000系列DSP)的上下文切换、中断向量表以及部分汇编指令编写的辅助函数。
 
 libbsp (c/src/lib/libbsp)
-console: UART串口的初始化、设备注册以及中断注册。
-clock: 系统时钟ISR的中断注册。
-timer: EVM开发板的0号定时器的初始化以及中断注册。在start.c中被调用。
-network：GMAC(PA)网卡的初始化、中断挂载以及链路层和驱动的接口设计。
-start: TI工具链下的入口地址位置main，包括控制寄存器的使能以及跳转到系统入口函数boot_card。
+- console: UART串口的初始化、设备注册以及中断注册。
+- clock: 系统时钟ISR的中断注册。
+- timer: EVM开发板的0号定时器的初始化以及中断注册。在start.c中被调用。
+- network：GMAC(PA)网卡的初始化、中断挂载以及链路层和驱动的接口设计。
+- start: TI工具链下的入口地址位置main，包括控制寄存器的使能以及跳转到系统入口函数boot_card。
 
 libfs (cpukit/libfs)
-devfs: 设备文件系统，给设备提供"/dev"目录。
-imfs: 内存文件系统。
-dosfs: FAT格式文件系统。
-pipe: FIFO设计，用于IMFS。
+- devfs: 设备文件系统，给设备提供"/dev"目录。
+- imfs: 内存文件系统。
+- dosfs: FAT格式文件系统。
+- pipe: FIFO设计，用于IMFS。
 
 libblock (cpukit/libblock)
-块设备设计，包括norflash文件系统支持。
+- 块设备，包括norflash支持。
 
 libnetworking (cpukit/libnetworking)
-RTEMS使用的BSD协议栈，移植时主要注意TI工具链对结构体的对齐问题。
+- RTEMS使用的BSD协议栈，移植时主要注意TI工具链对结构体的对齐问题。
 
 cpukit (内核代码)
-score rtems内核核心。
-posix POSIX接口。
-rtems RTEMS接口。
-sapi service API。
+- score: rtems内核核心。
+- posix: POSIX接口。
+- rtems: RTEMS接口。
+- sapi: service API。
 该目录下，笔者对组件进行了划分。
 
-libc (运行时库)
-libcsupport (cpukit/libcsupport)
-RTEMS修改的newlibc代码，和内核耦合性紧密。
-rts
-TI运行时库。实际工程中使用预先编译好的rts6000_elf.lib。
-newlib
-和GCC和RTEMS原生配合的运行时。包含需要的libc和libm。
+libc (cpukit/libcsupport) (运行时库)
+- libcsupport: RTEMS修改的newlibc代码，和内核耦合性紧密。
+- rts: TI运行时库。实际工程中使用预先编译好的rts6000_elf.lib。
+- newlib: 和GCC和RTEMS原生配合的运行时。包含需要的libc和libm。
 
 drivers
-drv (pdk_C6678_*/packages/ti/drv)
-EVM开发板上的固件和驱动。
-platform pdk_C6678_*/packages/ti/platform/evmc6678l/platform_lib/src
-硬件驱动接口封装。
-csl (pdk_C6678_*/packages/ti/csl)
-片上支持，包括片上对外设的寄存器读写接口。
+- drv (`pdk_C6678_*/packages/ti/drv`): EVM开发板上的固件和驱动。
+- platform (`pdk_C6678_*/packages/ti/platform/evmc6678l/platform_lib/src`): 硬件驱动接口封装。
+- csl (`pdk_C6678_*/packages/ti/csl`): 片上支持，包括片上对外设的寄存器读写接口。
 
 loader
-动态加载：支持多个库同时读取。
+- 动态加载：支持多个库同时读取。
 
 include
-注意包含的先后顺序，先包含系统，然后是运行时库。
-rtems_4_11
-将cpukit下各个目录的include合并到一起。rtems.h以及config.h和confdefs.h需要调整下位置。
-cpu.h 和 cpuopts.h 是移植的关键。cpuopts.h 和CCS的predefine负责条件编译(一定要一致！！！)。
-newlibc_
-rts_8_1_0
-包括c/c++的支持，包含了newlib的头文件，并将和newlib不一致的定义注释。
+- 注意包含的先后顺序，先包含系统，然后是运行时库。
+- 包括c/c++的支持，包含了newlib的头文件，并将和newlib不一致的定义注释。
+	- rtems_4_11
+		- 将cpukit下各个目录的include合并到一起。
+		- rtems.h以及config.h和confdefs.h需要调整下位置。
+
+	- cpu.h 和 cpuopts.h 是移植的关键。cpuopts.h 和CCS的predefine负责条件编译(一定要一致！！！)。
+		- `newlibc_`
+		- `rts_8_1_0`
 
 ## 中断控制器
 
